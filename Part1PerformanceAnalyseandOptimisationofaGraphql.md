@@ -1,29 +1,3 @@
-Performance Analysis and Optimisation of a GraphQL powered App with Instana
-
-[High-level Architecture and Services][1][2][2]
-
-[Observation][3][2][4]
-
-[Analysis - Apollo Graph Manager][5][3][6]
-
-[Finding 1: There are too many GraphQL requests triggered][7][5][8]
-
-[Instana™️ Analysis][9][6][10]
-
-[Local Setup][11][6][12]
-
-[Architecture:][13][7][14]
-
-[Traces for the browser requesting the initial board metadata:][15][9][16]
-
-[Traces for the browser requesting one Card-list with its cards:][17][9][18]
-
-[Finding 2: There are unneeded extra requests by the API-gateway][19][10][20]
-
-[How can we solve this?][21][11][22]
-
-[Summary][23][11][24]
-
 Modern IT landscapes typically consist of a bunch of different micro services. Replacing the monoliths now brings us complexity by a more parts and all its dependencies.
 
 A key aspect for running these systems is the appropriate monitoring with the ability to handle this complexity and help to observe system performance. It also needs to understand all different communication forms like REST, gprc, GraphQL, etc.
