@@ -6,3 +6,5 @@
 
 ---
 (links work in docsify)
+
+web-2-markdown conversion done by [turndown/](http://domchristie.github.io/turndown/)
