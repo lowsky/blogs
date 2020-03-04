@@ -1,5 +1,8 @@
-# blogs
+# blog posts
 
-readme, bla, bla
+- [PerformanceAnalyse part 1](Part1PerformanceAnalyseandOptimisationofaGraphql)
 
-find some blog posts, soon...
+[this README](README)
+
+---
+(links work in docsify)
