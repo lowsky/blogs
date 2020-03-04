@@ -1,3 +1,2 @@
 - [README](README)
-- [README.md](README.md)
 - [PerformanceAnalyse part 1](Part1PerformanceAnalyseandOptimisationofaGraphql)
