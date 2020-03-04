@@ -34,7 +34,7 @@ In this post we will analyse the performance issues of an existing application. 
 
 A demo application ([coolboard.fun][25]) for a GraphQL online course was quickly up and running, but ran into these performance issues.
 
-![Screenshot coolboard.fun Web  app](images/image6.png "coolboard.fun")
+![Screenshot coolboard.fun Web  app](images/image7.png "coolboard.fun")
 
 With more and more users, the performance went down faster than expected, resulting in:
 
@@ -105,9 +105,9 @@ Every request of data from the Prisma cloud by our API-gateway gets logged.
 
 This will give us some insights of  the communication between the Web site in the browser to the API-gateway.Even while the free version has timely limited logging of only the last 24 hours, it already shows us  that we run more than 200 queries, while opening the board page 29 times:  
 
-![](images/image9.png)
+![](images/image10.png)
 
-The response-time of the CardList query is distributed between 400 milliseconds and 14 seconds! ![](images/image8.png)
+The response-time of the CardList query is distributed between 400 milliseconds and 14 seconds! ![](images/image9.png)
 
 ## Finding 1: There are too many GraphQL requests triggered
 
@@ -115,7 +115,7 @@ To better understand which queries are slow or where the bottleneck is, we will 
 
 One root cause may be the limitation or throttling of our free GraphCool/Prisma cloud server:
 
-![](images/image7.png)
+![](images/image15.png)
 
 Our web client automatically handles it with running retry-after-failure cycles, but we definitely run into these limitations!
 
@@ -170,7 +170,7 @@ Instana™️ provides a “Website perspective” where we can see how our boar
 
 Although this looks pretty fine (load time below 1 second), the performance gets worse when more users load the board page. We can see that after clicking that button to open the Analytics page to show the backend traces.  
 
-![](images/image10.png)
+![](images/image16.png)
 
 We can see all specific XHR requests to the API-gateway (at localhost:4000) with the different, varying response times (in the last column):
 
@@ -205,9 +205,9 @@ Here, we also find an extra request - for some user data - as we can see in the 
 
 Finally, even while there are only 6 GraphQL requests by the frontend, we will end up in more than 12 backend calls to Prisma backend!
 
-![](images/image15.png)
+![](images/image6.png)
 
-![](images/image18.png)
+![](images/image8.png)
 
 ## Finding 2: There are unneeded extra requests by the API-gateway
 
