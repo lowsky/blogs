@@ -26,7 +26,7 @@ Before searching the root issue, we will need to understand the overall structur
 
 ## High-level Architecture and Services
 
-![](images/image16.png)[\[a\]](#cmnt1)
+![](images/image16.png)
 
 Web (SPA) -> API Server(BFF, Auth) -> Prisma Server(GraphQL - ORM mapping) -> DB (relational)  
 
@@ -73,7 +73,8 @@ But let’s figure out how the services communicate with each other by the help 
 
 The easiest way to get some metrics was activating the built-in tracing-feature for sending query metrics in the Apollo-server: After creating an account and api-key on Apollo Graph Manager at [https://engine.apollographql.com](https://engine.apollographql.com) we can activate tracing in the API-gateway. Additionally, we just need to turn it on by wrapping the server in our API gateway:
 
-![Extend server to send metrics to apollo graph manager](images/image13.png "Add Apollo engine")[carbon source-code.](https://carbon.now.sh/?bg%3Drgba(255%252C255%252C255%252C1)%26t%3Done-light%26wt%3Dnone%26l%3Djavascript%26ds%3Dtrue%26dsyoff%3D20px%26dsblur%3D68px%26wc%3Dfalse%26wa%3Dtrue%26pv%3D48px%26ph%3D32px%26ln%3Dfalse%26fl%3D1%26fm%3DHack%26fs%3D14px%26lh%3D133%2525%26si%3Dfalse%26es%3D2x%26wm%3Dfalse%26code%3Dconst%252520server%252520%25253D%252520new%252520GraphQLServer(%25257B%252520schema%252520%25257D)%25253B%25250Aconst%252520httpServer%252520%25253D%252520server.createHttpServer()%25253B%25250Aconst%252520port%252520%25253D%2525204000%25253B%25250A%25250A%25252F%25252F%252520When%252520we%252520have%252520an%252520API%252520key%252520available%25252C%252520wrap%252520it%252520into%252520apollo%252520engine%252520%25250A%25252F%25252F%252520to%252520send%252520tracing%252520metrics%252520to%252520apollo%252520graph%252520manager%25250Aif%252520(process.env.ENGINE_API_KEY)%252520%25257B%25250A%252520%252520%25250A%252520%252520%252520%252520const%252520%25257B%252520ApolloEngine%252520%25257D%252520%25253D%252520require(%2527apollo-engine%2527)%25253B%25250A%252520%252520%252520%252520const%252520engine%252520%25253D%252520new%252520ApolloEngine()%25253B%25250A%25250A%252520%252520%252520%252520engine.listen(%25257B%252520port%25252C%252520httpServer%252520%25257D)%25253B%25250A%25250A%25257D%252520%25250Aelse%252520%25257B%25250A%252520%252520%252520%252520%25252F%25252F%252520start%252520without%252520collecting%252520metrics%25250A%252520%252520%252520%252520httpServer.listen(%25257B%252520port%252520%25257D)%25253B%25250A%25257D)
+![Extend server to send metrics to apollo graph manager](images/image13.png "Add Apollo engine")
+[carbon source-code.](https://carbon.now.sh/?bg%3Drgba(255%252C255%252C255%252C1)%26t%3Done-light%26wt%3Dnone%26l%3Djavascript%26ds%3Dtrue%26dsyoff%3D20px%26dsblur%3D68px%26wc%3Dfalse%26wa%3Dtrue%26pv%3D48px%26ph%3D32px%26ln%3Dfalse%26fl%3D1%26fm%3DHack%26fs%3D14px%26lh%3D133%2525%26si%3Dfalse%26es%3D2x%26wm%3Dfalse%26code%3Dconst%252520server%252520%25253D%252520new%252520GraphQLServer(%25257B%252520schema%252520%25257D)%25253B%25250Aconst%252520httpServer%252520%25253D%252520server.createHttpServer()%25253B%25250Aconst%252520port%252520%25253D%2525204000%25253B%25250A%25250A%25252F%25252F%252520When%252520we%252520have%252520an%252520API%252520key%252520available%25252C%252520wrap%252520it%252520into%252520apollo%252520engine%252520%25250A%25252F%25252F%252520to%252520send%252520tracing%252520metrics%252520to%252520apollo%252520graph%252520manager%25250Aif%252520(process.env.ENGINE_API_KEY)%252520%25257B%25250A%252520%252520%25250A%252520%252520%252520%252520const%252520%25257B%252520ApolloEngine%252520%25257D%252520%25253D%252520require(%2527apollo-engine%2527)%25253B%25250A%252520%252520%252520%252520const%252520engine%252520%25253D%252520new%252520ApolloEngine()%25253B%25250A%25250A%252520%252520%252520%252520engine.listen(%25257B%252520port%25252C%252520httpServer%252520%25257D)%25253B%25250A%25250A%25257D%252520%25250Aelse%252520%25257B%25250A%252520%252520%252520%252520%25252F%25252F%252520start%252520without%252520collecting%252520metrics%25250A%252520%252520%252520%252520httpServer.listen(%25257B%252520port%252520%25257D)%25253B%25250A%25257D)
 
 Every request of data from the Prisma cloud by our API-gateway gets logged.
 
@@ -139,8 +140,6 @@ Instana™️ provides a “Website perspective” where we can see how our boar
 2.  Some extra request for each List of Cards
 
 ![](images/image4.png)
-
-* * *
 
 Although this looks pretty fine (load time below 1 second), the performance gets worse when more users load the board page. We can see that after clicking that button to open the Analytics page to show the backend traces.  
 
@@ -214,18 +213,4 @@ You could also request a demo or run a PoC together the [APM team](https://www.c
 
 There is also this post about how to install [instana on a kubernetes cluster](https://blog.codecentric.de/2019/10/kubernetes-monitoring-mit-instana-teil-1/). (German)  
 
-As we now have an idea what the root problem is, we can improve the performance by up to 50% with only little effort. This will be presented in a follow-up blog post.[\[b\]](#cmnt2)
-
-[\[a\]](#cmnt_ref1)Different image
-
-[\[b\]](#cmnt_ref2)In a follow-up blog post we will also look into
-
-\* How we improved the application
-
-GraphQL resolver,
-
-\* How we removed auth-check and its DB request
-
-\* How the performance increased in comparison to old version
-
-A <-> B
+As we now have an idea what the root problem is, we can improve the performance by up to 50% with only little effort. This will be presented in a follow-up blog post.
