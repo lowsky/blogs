@@ -78,7 +78,7 @@ The easiest way to get some metrics was activating the built-in tracing-feature 
 
 Every request of data from the Prisma cloud by our API-gateway gets logged.
 
-This will give us some insights of  the communication between the Web site in the browser to the API-gateway.Even while the free version has timely limited logging of only the last 24 hours, it already shows us  that we run more than 200 queries, while opening the board page 29 times:  
+This will give us some insights of  the communication between the Web site in the browser to the API-gateway. Even while the free version has timely limited logging of only the last 24 hours, it already shows us  that we run more than 200 queries, while opening the board page 29 times:  
 
 ![](images/image10.png)
 
@@ -208,7 +208,8 @@ With Instana™️ we additionally get the detailed bigger picture and can also 
 We used Instana™️ for the detection of the performance issues with only a limited view of only a part of the system.  
 You can imagine how effective this could be when it is used within the production system, monitoring all parts of the whole system, and when you also can use its advanced alerting features!  
 
-When you are interested in more details and even want to try-out Instana™️, you can run a full-featured, 14-days trial version: [Instana™️ Trial](https://www.instana.com/trial/?last_program_channel%3DPartner%26last_program%3Dcodecentric%26utm_source%3Dcodecentric%26utm_medium%3DWebsite%26utm_campaign%3DPartner_Promotions)  
+When you are interested in more details and even want to try-out Instana™️, you can run a full-featured, 14-days trial version: [Instana™️ Trial](https://www.instana.com/trial/?last_program_channel=Partner&last_program=codecentric&utm_source=codecentric&utm_medium=Website&utm_campaign=Partner_Promotions)  
+
 You could also request a demo or run a PoC together the [APM team](https://www.codecentric.de/leistungen/it-acceleration/) (German)
 
 There is also this post about how to install [instana on a kubernetes cluster](https://blog.codecentric.de/2019/10/kubernetes-monitoring-mit-instana-teil-1/). (German)  
