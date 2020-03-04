@@ -26,7 +26,7 @@ Before searching the root issue, we will need to understand the overall structur
 
 ## High-level Architecture and Services
 
-![](images/image16.png)
+![](images/imageXX.png)
 
 Web (SPA) -> API Server(BFF, Auth) -> Prisma Server(GraphQL - ORM mapping) -> DB (relational)  
 
