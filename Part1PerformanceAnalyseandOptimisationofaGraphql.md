@@ -6,7 +6,7 @@ Additionally, this advanced tooling supports with real-time performance analysis
 
 In this post we will analyse the performance issues of an existing application. In a follow-up blog post we will then present the solution and the resulting performance improvement.
 
-A demo application ([coolboard.fun](https://coolboard.fun)) for a GraphQL online course was quickly set up and running, but ran into these performance issues.
+A demo application ([www.coolboard.fun](https://www.coolboard.fun)) for a GraphQL online course was quickly set up and running, but ran into these performance issues.
 
 ![Screenshot coolboard.fun Web  app](images/image7.png "coolboard.fun")
 
