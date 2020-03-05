@@ -1,6 +1,6 @@
 Modern IT landscapes typically consist of a bunch of different micro services. Replacing the monoliths now brings us complexity by a more parts and all its dependencies.
 
-A key aspect for running these systems is the appropriate monitoring with the ability to handle this complexity and help to observe system performance. It also needs to understand all different communication forms like REST, gprc, GraphQL, etc.
+A key aspect for running these systems is the appropriate monitoring with the ability to handle this complexity and help to observe system performance. It also needs to understand all different communication forms like REST, gRPC, GraphQL, etc.
 
 Additionally, this advanced tooling supports with real-time performance analysis for finding and fixing bottlenecks quickly to avoid any bad user impression.
 
@@ -29,6 +29,7 @@ Before searching the root issue, we will need to understand the overall structur
 ![](images/imageXX.png)
 
 Web (SPA) -> API Server(BFF, Auth) -> Prisma Server(GraphQL - ORM mapping) -> DB (relational)  
+![](images/imageX.png)
 
 The Single-page web application (SPA) is running in the browser and connects to [Auth0.com](https://auth0.com/)for authentication and accesses the API Server which provides a specific GraphQL API interface and does authentication handling (aka. backend-for-frontend). It can even be scaled up easily, because there it does not do session handling. The authentication is only done by exchanging JWT auth tokens.  
 The user management and authentication is done via the separate third-party service, [Auth0.com](https://auth0.com/).
@@ -113,28 +114,25 @@ To use Instana™️, I just add end-user-monitoring and start tracing API-gatew
 
 Compared to the production environment we will get different timings, but that’s okay, as we just want to focus on the communication flow now.
 
-XXX: this needs to be added somehow here. “There is not much to do with Instana™️, worx OOTB...”
+To enable the end-user-monitoring we will need to create a web-site in Instana™️, and add this snippet into web-page, similar to e.g. embedding Google Analytics library
 
-*   How we adapted the application to get the metrics
+![](images/tracking-script.png)
 
-*   Adapt EUM
+Everything will work automatically out of the box, we just need to add extra steps for e.g. setting the name of the page, via
 
-*   \-> add to main.html page: Source code ...
+`ineum('page', 'main-page')`
 
-*   Adapt BFF Node.js API-gateway
-*   \-> add node.js - collector: Source code …
-    
-    * * *
-    
+To get full, automatic code injection to get full tracing and monitoring in the Node.js based API-gateway, we just need to run these lines before anything else. This way all requests and responses get traced automatically!
 
-XXX: this needs to be added somehow here ...
+![](images/image17.png)
 
-### Architecture:
+### The setup and high-level architecture for our further analysis:
 
-browser -> webapp -> API-gateway (node) -> Prisma server (jvm) -> db (mysql)  
-\[image\]
+![](images/imageXXX.png)
 
-Instana™️ provides a “Website perspective” where we can see how our boards page with all its resources gets loaded. After filtering for XHR / Post requests, we already see the necessary requests for boards data:
+Let’s start from the user perspective:
+
+Instana™️ provides a “website view” where we can see how our boards page with all its resources gets loaded. After filtering for XHR / Post requests, we already see the necessary requests for boards data:
 
 1.  One request, getting board’s name and its CardList-IDs only
 2.  Some extra request for each List of Cards
@@ -169,9 +167,6 @@ We find 2 sequential requests to the Prisma backend, called by the API-gateway a
 
 ### Traces for the browser requesting one Card-list with its cards:
 
-![](images/image17.png)
-
-  
 Here, we also find an extra request - for some user data - as we can see in the details on the right side:  
 
 ![](images/image3.png)
