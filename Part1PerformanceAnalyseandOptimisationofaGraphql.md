@@ -83,7 +83,7 @@ This will give us some insight on the communication between the website in the b
 
 ![](images/image10.png)
 
-The response-time of the CardList query is distributed between 400 milliseconds and 14 seconds! ![](images/image9.png)
+The response-time of the CardList query is distributed between 400 milliseconds and 14 seconds!
 
 ## Finding 1: There are too many GraphQL requests triggered
 
