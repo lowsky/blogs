@@ -1,8 +1,6 @@
-Modern IT landscapes typically consist of a bunch of different microservices. Replacing the monoliths now brings us complexity due to more parts and all their dependencies.
+Modern IT landscapes typically consist of a bunch of different microservices. Replacing the monoliths brings us more complexity due to more parts and all their dependencies.
 
-A key aspect for running these systems is the appropriate monitoring with the ability to handle this complexity and help to observe system performance. It also needs to understand all different communication forms like REST, gRPC, GraphQL, etc.
-
-Additionally, this advanced tooling supports with real-time performance analysis for finding and fixing bottlenecks quickly in order to avoid bad user impressions.
+A key aspect for running these systems is the appropriate monitoring with the ability to handle this complexity and to observe system performance. It also needs to understand all different communication forms like REST, gRPC, GraphQL, etc.
 
 In this post we will analyse the performance issues of an existing application. In a follow-up blog post we will then present the solution and the resulting performance improvement.
 
@@ -31,7 +29,7 @@ Before searching the root issue, we will need to understand the overall structur
 Web (SPA) -> API Server(BFF, Auth) -> Prisma Server(GraphQL - ORM mapping) -> DB (relational)  
 ![](images/imageX.png)
 
-The Single-page application (SPA) is running in the browser and connects to [Auth0.com](https://auth0.com/)for authentication and accesses the API Server which provides a specific GraphQL API interface and does authentication handling (aka: backend-for-frontend). It can even be scaled up easily, because it does not do session handling there. The authentication is only done by exchanging JWT auth tokens.  
+The Single-page application (SPA) is running in the browser and connects to [Auth0.com](https://auth0.com/) for authentication and accesses the API Server which provides a specific GraphQL API interface and does authentication handling (aka: backend-for-frontend). It can even be scaled up easily, because it does not do session handling there. The authentication is only done by exchanging JWT auth tokens.  
 The user management and authentication is done via the separate third-party service, [Auth0.com](https://auth0.com/).
 
 The Prisma Server is an ORM and it provides all usual CRUD operations via GraphQL operations.
@@ -79,7 +77,7 @@ The easiest way to get some metrics was by activating the built-in tracing-featu
 
 Every request of data from the Prisma cloud by our API-gateway gets logged.
 
-This will give us some insight on the communication between the website in the browser to the API-gateway. Even while the free version has timely limited logging of only the last 24 hours, it already shows us  that we run more than 200 queries, while opening the board page 29 times:  
+This will give us some insight on the communication between the website in the browser to the API-gateway. Even while the free version has timely limited logging of only the last 24 hours, it already shows us that we run more than 200 queries, while opening the board page 29 times:
 
 ![](images/image10.png)
 
@@ -101,34 +99,33 @@ Let’s figure out how the API-gateway and the Prisma cloud server communicate.
 
 ## Instana™️ Analysis
 
-For further analysis we will use the InstanaTM APM monitoring tool which allows us to get full tracing metrics of all requests from the browser down to the database.
+At this point I was looking for an APM tool which is capable of understanding GraphQL. That means to be able to understand and differentiate the GraphQL queries which all are sent as POST requests to the same endpoint (e.g. /graphql)  
+  
+I checked well-known tools on the market, but actually there was only InstanaTM capable of tracing this GraphQL protocol communication.  
+Instana™️ also provides end-user-monitoring (EUM) together with tracing the communication of microservices down to database operations.
 
-Instana™️ is a modern APM-tool which can be used as a Saas or on-prem version.  
-Instana™️ also provides end-user-monitoring (EUM) together with tracing the communication of microservices and down to database operations.
+For the inspection we will use Instana™️ running as a SaaS version.
 
-Here, we will use the Instana™️ SaaS version and just need to start an agent in our local Docker environment which sends the recorded monitoring data to the Instana™️ backend.
-
-### Local Setup
-
-To use Instana™️, I just add end-user-monitoring and start tracing API-gateway (more later)
-
+We will need to run the Instana™️ agent in the same environment as our services. The agent sends the recorded monitoring data to the Instana™️ backend.  
+For this demo I can also start it in a local docker environment and start the API-gateway there.  
 Compared to the production environment we will get different timings, but that’s okay, as we just want to focus on the communication flow for now.
-
-To enable the end-user-monitoring we will need to create a website in Instana™️, and add this snippet into webpage, similar to e.g. embedding Google Analytics library
-
-![](images/tracking-script.png)
-
-Everything will work automatically out of the box, we just need to add extra steps for e.g. setting the name of the page, via
-
-`ineum('page', 'main-page')`
-
-To get full, automatic code injection in order to get full tracing and monitoring in the Node.js based API-gateway, we just need to run these lines before anything else. This way, all requests and responses get traced automatically!
-
-![](images/image17.png)
 
 ### The setup and high-level architecture for our further analysis:
 
 ![](images/imageXXX.png)
+
+Let’s start with enabling end-user-monitoring:  
+We will need to define a website in Instana™️, and add this snippet into webpage, similar to embedding e.g. Google Analytics library:
+
+![](images/tracking-script.png)
+
+Everything will work automatically out of the box, we only need to add setting the name of the page, via injecting a javascript call 
+`ineum('page', 'main-page')`
+ at the end of the webpage.
+
+To get full, automatic code injection in order to get full tracing and monitoring in the Node.js based API-gateway, we just need to run these lines before anything else. This way, all requests and responses get traced automatically!
+
+![](images/image17.png)
 
 Let’s start from the user perspective:
 
@@ -196,16 +193,13 @@ Low-hanging fruits: As a quick measure we should get rid of fetching extra user 
 
 ## Summary
 
-In order to be able to find performance issues it is necessary to have the right tools to not only monitor performance but also to analyse it easily and find problems quickly.  
+In order to find performance issues it is necessary to have the right tools: not only to monitor performance but also to analyse it easily and find problems quickly.  
 The Apollo Engine helped to get some quick statistics first, but will be limited to GraphQL specific operations only.  
-With Instana™️ we additionally get the detailed bigger picture and can also find the bottleneck in the communication patterns of the the whole system.
+Additionally with Instana™️ we get a bigger detailed picture and we can also find the bottleneck in the communication - via GraphQL and other protocols - of the the whole system.
 
-We used Instana™️ for the detection of the performance issues with only a limited view of only a part of the system.  
-You can imagine how effective this could be when it is used within the production system, monitoring all parts of the whole system, and when you also can use its advanced alerting features!  
+For this post we used Instana™️ for the detection of the performance issues with only a limited view of only a part of the system. You can imagine how effective this can be when used within the whole production system, monitoring all parts of the whole system, and when you also can use its advanced alerting features!  
 
-When you are interested in more details and even want to try Instana™️, you can run a full-featured, 14-days trial version: [Instana™️ Trial](https://www.instana.com/trial/?last_program_channel=Partner&last_program=codecentric&utm_source=codecentric&utm_medium=Website&utm_campaign=Partner_Promotions)  
-You could also request a demo or run a PoC together the [APM team](https://www.codecentric.de/leistungen/it-acceleration/) (German)
-
-There is also this post about how to install [instana on a kubernetes cluster](https://blog.codecentric.de/2019/10/kubernetes-monitoring-mit-instana-teil-1/). (German)  
+When you are interested in more details and even want to try Instana™️, you can run a full-featured [14-days Instana™️ Trial version](https://www.instana.com/trial/?last_program_channel=Partner&last_program=codecentric&utm_source=codecentric&utm_medium=Website&utm_campaign=Partner_Promotions) There is also this post about how to install [instana on a kubernetes cluster](https://blog.codecentric.de/2019/10/kubernetes-monitoring-mit-instana-teil-1/)(German).  
+You could also request a demo or run a PoC together with the [APM team](https://www.codecentric.de/leistungen/it-acceleration/).
 
 As we now have an idea what the root problem is, we can improve the performance by up to 50% with only little effort. This will be presented in a follow-up blog post.
