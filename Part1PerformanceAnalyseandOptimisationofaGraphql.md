@@ -26,7 +26,7 @@ Before searching the root issue, we will need to understand the overall structur
 
 ![](images/imageXX.png)
 
-Web (SPA) -> API Server(BFF, Auth) -> Prisma Server(GraphQL - ORM mapping) -> DB (relational)
+Web (SPA) -> API Server(BFF, Auth) -> Prisma Server(GraphQL - ORM mapping) -> DB
 
 The Single-page application (SPA) is running in the browser and connects to [Auth0.com](https://auth0.com/) for authentication and accesses the API Server which provides a specific GraphQL API interface and does authentication handling (aka: backend-for-frontend). It can even be scaled up easily because it does not do session handling there. The authentication is only done by exchanging JWT auth tokens.  
 The user management and authentication is done via the separate third-party service, [Auth0.com](https://auth0.com/).
@@ -47,7 +47,7 @@ Then, every list of cards gets loaded and the lanes filled with its cards. Under
 
 ![board page has been fully loaded](images/image2.png "board fully loaded")
 
-When you are wondering why the application reacts in this way, we need to mention that
+When you are wondering why the application behaves in this way, we need to mention that
 
 *   the purpose of this application was demonstration of the use of GraphQL,
 *   developing and testing the application was done on a local dev machine within a docker environment,
@@ -119,7 +119,7 @@ Instana™️ provides a “website view” where we can see how our boards page
 
 ![](images/image4.png)
 
-Although this looks pretty fine (load time below 1 second), the performance gets worse when more users load the board page. We can see that after clicking that button to open the Analytics page to show the backend traces.  
+Although this looks pretty fine (load time below 1 second), the performance gets worse when more users load the board page. We can see that after clicking that button to open the Analytics page to show the backend traces. 
 
 ![](images/image16.png)
 
@@ -161,9 +161,7 @@ Finally, even while there are only 6 GraphQL requests by the frontend, we will e
 
 In the analysis above, we found out that the API-gateway is requesting some unneeded and unexpected extra user data from the database backend (at eu1.prisma.sh), doubling the number of requests.
 
-Quickly running into the rate-limiting causes the varying latency with a maximum response-times of up to 14 seconds as Instana™️ shows us here:
-
-![](images/image11.png)  
+Quickly running into the rate-limiting causes the varying latency…
 
 ## How can we solve this?
 
@@ -180,10 +178,10 @@ In order to find performance issues it is necessary to have the right tools: not
 The Apollo Engine helped to get some quick statistics first, but will be limited to GraphQL specific operations only.  
 Additionally with Instana™️ we get a bigger detailed picture and we can also find the bottleneck in the communication - via GraphQL and other protocols - of the the whole system.
 
-For this post we used Instana™️ for the detection of the performance issues with only a limited view of only a part of the system. You can imagine how effective this can be when used within the whole production system, monitoring all parts of the whole system, and when you also can use its advanced alerting features!  
+For this post we used Instana™️ for the detection of the performance issues with only a limited view of only a part of the system. You can imagine how effective this can be when used within the whole production system, monitoring all parts of the whole system, and when you also can use its advanced alerting features!
 
-When you are interested in more details and even want to try Instana™️, you can run a full-featured [14-days trial](https://www.instana.com/trial/?last_program_channel=Partner&last_program=codecentric&utm_source=codecentric&utm_medium=Website&utm_campaign=Partner_Promotions) version. 
+When you are interested in more details and even want to try Instana™️, you can run a full-featured [14-days trial](https://www.instana.com/trial/?last_program_channel=Partner&last_program=codecentric&utm_source=codecentric&utm_medium=Website&utm_campaign=Partner_Promotions) version.  
 There is also this post about how to install [instana on a kubernetes cluster](https://blog.codecentric.de/2019/10/kubernetes-monitoring-mit-instana-teil-1/)(German).  
 You could also request a demo or run a PoC together with the [APM team](https://www.codecentric.de/leistungen/it-acceleration/).
 
-As we now have an idea what the root problem is, we can improve the performance by up to 50% with only little effort. This will be presented in a follow-up blog post.
+As we now have an idea what the root problem is, we can improve the performance by reducing the load on our backend by 50% with only little effort. This will be presented in a follow-up blog post..
