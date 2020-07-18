@@ -1,20 +1,20 @@
 # Performance Optimisation of a GraphQL powered App with instana
 ## Part 2 of Blog post series. -> [Part 1](https://hubs.ly/H0nrMwH0) 
 
-**"Works on my machine"**: Okay, but we know quite well the software never behaves the same when running on different machines... I knew that, but ran into unexpected performance issues when going live with a simple app.
+**"Works on my machine."** Okay, but we know quite well software never behaves the same when running on different machines... I knew that, but ran into unexpected performance issues when going live with a simple app.
 
 This is about an existing GraphQL application [www.coolboard.fun](https://www.coolboard.fun) - a kanban board trello-clone app. 
 It ran terribly slow when going live, running into performance issues caused by a rate-limited backend.
 
-After the root cause was found - see [previous post](https://hubs.ly/H0nrMwH0) - it now can get optimized easily and we will see the improvement in the results.
+After the root cause was found (see [previous post](https://hubs.ly/H0nrMwH0)) it's ready to be optimized and we will see the improvements in the results.
 
-Why did I not notice it earlier while development? I focused on feature delivery, and when testing I was the only user 😉 - But with more users the problem emerged 😲
+Why did I not notice it earlier while developing? I was focused on delivering features, and when testing I was the only user 😉. But with more users the problem emerged 😲!
 
-With appropriate monitoring I was able to find the bottleneck caused by simple design flaws quickly.
+With appropriate monitoring I was able to find the bottlenecks caused by simple design flaws quickly.
 
-As described in the previous blog post in detail, it was caused by a flawed design which was not visible while development, but found in production with instana.
+As described in the [previous blog post](https://hubs.ly/H0nrMwH0) in detail, it was caused by a flawed design which was not visible while developing but easily found in production with Instana.
 
-In this post I will describe how the load will easily get reduced by 50% and how the performance gets improved greatly.
+In this post I will describe how the load can easily be reduced by 50% and how the performance can greatly be improved.
 
 ### Root cause
 
