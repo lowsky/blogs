@@ -97,22 +97,21 @@ export const resolvers = {
 }
 ```
 
-At first view, this implementation seems to be correctly. It is blocking any non authenticated access. 
+At first sight, this implementation seems to be correct. It is blocking any non-authenticated access. 
 
 It worx. Done. Wait! 😯
 
 Can you spot the mistake? 
 
-1. 🧐 The `currentUser()` retrieves the database-id, and fetches the user from the database a second time.
+1. 🧐 The `currentUser()` retrieves the user's id, and loads the user from the database a second time.
 2. 🧐 Without any need for the `user's id` - why do we look-up the user in the database? This was not required at all.
 
 # Authentication-check improved
 
-We introduce extract this method to only verify that the OAuth token from http-header is valid:
+We extract the functionality to only verify that the OAuth token from http-header is valid:
 ```ensureAuth0TokenValid()```
 
-Additionally we do the user lookup in the resolver itself directly, after extracting the authentication ID (part of OAuth token)
-
+Then we do the user lookup directly in the resolver itself, after extracting the authentication ID (part of OAuth token).
 The adapted resolvers are now:
 
 ```javascript
@@ -144,18 +143,18 @@ at all.
 We can hold that information in a lookup table, but need to load the info once in the lifecycle of the server, - so it is less ideal with serverless lambdas.
 
 ```javascript
- // server.js  
+// server.js  
 const userIdByAuthIdLookup = {};  
 
-export lookupUserWithAuthId = async (authenticationID) => {
+export const lookupUserWithAuthId = async (authenticationID) => {
     return userIdByAuthIdLookup[authenticationID] ?? 
-        userIdByAuthIdLookup[authenticationID] = await db.query.user({where: { authenticationID }})
+        (userIdByAuthIdLookup[authenticationID] = await db.query.user({where: { authenticationID }}))
  }
 ```
 
 This simplifies the resolver:
 
-```javascript 
+```javascript
   // ...
   async currentUser(parent, args, context, info) {
     const authenticationID = await retrieveAuthHeaderToken(context)
@@ -186,10 +185,9 @@ export const Mutations = {
 
 # Verification
 
-## Let's test the result
+## Let’s run this **simple**, but reproducible scenario: 
+We will trigger the opening of the board page in the browser 10 times with a 2 seconds delay. This will create "enough load": the loading will need up to one minute to be finished.
 
-We want to run a **simple**, but reproducable scenario: 
-It will just trigger open the board page 10 times with a 2 seconds delay. This will be "enough" for up to one minute.
 Then I will wait one minute, to get out of the rate-limiting time slot, and repeat it again.
 With repeating this again, we can ensure to get more solid stats.
 -> We will see 3 sections in our diagrams...
