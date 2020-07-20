@@ -1,14 +1,14 @@
-# Performance Optimisation of a GraphQL powered App with instana
+# Performance optimization of a GraphQL powered App with instana
 ## Part 2 of Blog post series. -> [Part 1](https://hubs.ly/H0nrMwH0) 
 
-**"Works on my machine."** Okay, but we know quite well software never behaves the same when running on different machines... I knew that, but ran into unexpected performance issues when going live with a simple app.
+**"Works on my machine."** Okay, but we know quite well software never behaves the same when running on different machines... I knew that, but ran into unexpected performance issues when going live with a simple app. Here’s how I fixed the problem and improved performance.
 
 This is about an existing GraphQL application [www.coolboard.fun](https://www.coolboard.fun) - a kanban board trello-clone app. 
 It ran terribly slow when going live, running into performance issues caused by a rate-limited backend.
 
 After the root cause was found (see [previous post](https://hubs.ly/H0nrMwH0)) it's ready to be optimized and we will see the improvements in the results.
 
-Why did I not notice it earlier while developing? I was focused on delivering features, and when testing I was the only user 😉. But with more users the problem emerged 😲!
+Why did I not notice it earlier while developing? I was focused on delivering features, and when testing I was the only user 😉. But with more users more problems emerged 😲!
 
 With appropriate monitoring I was able to find the bottlenecks caused by simple design flaws quickly.
 
@@ -18,7 +18,7 @@ In this post I will describe how the load can easily be reduced by 50% and how t
 
 ### Root cause
 
-As mentioned in the previous post, our Gateway API always fires one additional GraphQL request for user data when the frontend fetches any date.
+As mentioned in the previous post, our Gateway API always fires one additional GraphQL request for user data when the frontend fetches any data.
 You might already guess that this could somehow be related to authentication, right? And we will see, that is the right direction ...
 
 ---
@@ -99,7 +99,7 @@ export const resolvers = {
 
 At first sight, this implementation seems to be correct. It is blocking any non-authenticated access. 
 
-It worx. Done. Wait! 😯
+“It worx”... “Done!”... “Wait?!?”... 😯
 
 Can you spot the mistake? 
 
@@ -138,9 +138,9 @@ export const Query = {
 }
 ```
 
-There is another simple optimisation possible, because the relation of authentication-id to user-id does not change
-at all. 
-We can hold that information in a lookup table, but need to load the info once in the lifecycle of the server, - so it is less ideal with serverless lambdas.
+There is another possible simple optimization because the relation of authentication-id to user-id does not change **at all**.
+ 
+We can hold that information in a lookup table, but need to load the info once in the lifecycle of the server - so it is less ideal with serverless lambdas.
 
 ```javascript
 // server.js  
@@ -174,23 +174,20 @@ export const Mutations = {
         
         return ctx.db.mutation.createBoard({ data: { name, createdBy: userId } }, info)
     }
+}
 ```
 
  
 ### Summary:
 
-* We replaced the authentication verification with just the OAuth token verification for query operations
+* We replaced the authentication verification with just the OAuth token verification for query operations.
 * We removed an unneeded database access for retrieving the data of the currently logged-in user.
 * We are now caching the result of the User lookup.
 
 # Verification
 
-## Let’s run this **simple**, but reproducible scenario: 
-We will trigger the opening of the board page in the browser 10 times with a 2 seconds delay. This will create "enough load": the loading will need up to one minute to be finished.
-
-Then I will wait one minute, to get out of the rate-limiting time slot, and repeat it again.
-With repeating this again, we can ensure to get more solid stats.
--> We will see 3 sections in our diagrams...
+## Let’s run this **simple** reproducible scenario: 
+We will trigger the opening of the board page in the browser 10 times with a 2 seconds delay. This will create "enough load":  the loading will need up to one minute to be finished.
 
 ```shell
 #!/bin/bash 
@@ -199,13 +196,18 @@ for i in 1 2 3 4 5 6 7 8 9 10 ; do \
    sleep 2 ; \
 done                                                                     
 ``` 
-and run it 3 times via:
+
+Then I will **wait one minute** to get out of the rate-limiting time slot, and repeat it. After repeating this once again, we can ensure to get **more solid stats**:
 
 ```shell 
-sleep 60 ; openBoard10times
-sleep 60 ; openBoard10times
-sleep 60 ; openBoard10times
+openBoardPage_10times
+sleep 60
+openBoardPage_10times
+sleep 60
+openBoardPage_10times
 ```
+
+This generates 3 sections we will see in the charts in our results...
 
 ## Expected result and comparison
 After logging-in once into the browser, we are staying authenticated for the testing.
@@ -220,7 +222,7 @@ Our frontend will send these GraphQL requests to the API gateway server:
 
 ### Overall calls from the API gateway to the GraphQL backend
 
-| Before Optimisation | After Optimisation |
+| Before optimization | After optimization |
 |---|---|
  
 ![prisma requests](https://dev-to-uploads.s3.amazonaws.com/i/0s2jpkhmjyilobnp2bjp.png)
@@ -230,7 +232,7 @@ We can go deeper into the numbers for each GraphQL query (type), by grouping the
 
 ![GraphQL Calls](https://dev-to-uploads.s3.amazonaws.com/i/7s4ehsqordu33696o6z7.png)
 
--> Before optimisation this would lead to **420 calls** in summary:
+-> Before optimization this would lead to **420 calls** in summary:
 
 * 30 user queries + (30 user queries for auth check)
 * 30 board queries + (30 user-queries for auth check)
@@ -240,9 +242,9 @@ We can go deeper into the numbers for each GraphQL query (type), by grouping the
 
 -> After optimising it results in overall **180 calls** 👍
 
-### latencies
+### Latencies
 
-And after optimisation, we had only minimal latency compared to before.
+And after optimization, we had only minimal latency compared to before.
 
 Here, Instana gives us more interesting details: 😎
 
@@ -251,27 +253,35 @@ Here, Instana gives us more interesting details: 😎
 ### Page load times for GraphQL requests
 
 And finally the improved page load times show much better results:
-(attention, the vertical scale is different)
+(note - the vertical scale is different)
 
 ![Load time on page](https://dev-to-uploads.s3.amazonaws.com/i/7qlfikpdpdu78oo22by6.png)
 
 
-## Outlook
+## Looking forward
 
-* The performance improvement shown was just some simple optimisation to reduce the bottleneck.
-* We could try to do more optimisation: e.g. why not sharing the userid to the client and send it together with auth-header? That will at the end only save us one extra lookup for some GraphQL operations, but will make the app unsecure, because sharing internal data. (Don't do that!)
+* The performance improvement shown was just some simple optimization to reduce the bottleneck.
+* We could try to do more optimization: e.g. why not share the userid to the client and send it together with auth-header? That will at the end only save us one extra lookup for some GraphQL operations, but will make the app unsecure, because sharing internal data. (Don't do that!)
+* **Finally**, the natural performance limit, defined by the current backend, is reached. 
 
--> Finally the natural performance limit - defined by the current backend - is reached. 
+Our learnings let us think about alternatives more wisely, for example:
 
-This learning allows us to choose an alternative wisely. Hosting the prisma database and running the prisma server by our own will be the cheapest solution.
+* The quick solution: Cut the limit by paying more for Prisma Cloud service.
+* We could host the Prisma database and run the Prisma server on our own.
+* Affects also the UI frontend: We could also change the API to allow loading the whole board with only one GraphQL request.
 
-
-## Result, Effect
+## Result, Outcome and Impact
  
-We found that improving the performance was not a "big thing". While in this case was hidden while development, it got noticeable in production, caused by a third-party system.
+We found that, once we understood the issue, improving the performance was not difficult. While the problem was hidden in development, it got noticeable in production, caused by a third-party system.
 
 * Such small issues can easily slip through while designing and implementation.
-* We used appropriate monitoring and tooling to easy locate it ([part 1](https://hubs.ly/H0nrMwH0)):
-* We verified our results after the optimisation was implemented.
+* We used appropriate monitoring and tooling to easily locate it ([part 1](https://hubs.ly/H0nrMwH0)).
+* We verified the results or our optimization.
 
-Even while this was only a small project, you can imagine how difficult it can get on a bigger system or more distributed systems!
+Even though this was only a small project, you can imagine how difficult troubleshooting can get on a bigger system or more distributed systems!
+
+--- 
+_For publishing on the blog post on codecentric pages:_
+
+When you are interested in more details and even want to try Instana™️, you can run a [full-featured 14-days trial version](https://www.instana.com/trial/?last_program_channel=Partner&last_program=codecentric&utm_source=codecentric&utm_medium=Website&utm_campaign=Partner_Promotions). There is also this post about how to install [Instana on a kubernetes cluster](https://blog.codecentric.de/2019/10/kubernetes-monitoring-mit-instana-teil-1/) (German).
+You could also [request a demo](https://www.instana.com/schedule-demo/) or run a PoC together with the [APM team](https://www.codecentric.de/leistungen/application-performance-management).
