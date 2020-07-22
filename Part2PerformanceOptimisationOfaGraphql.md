@@ -221,7 +221,7 @@ Our API gateway will send requests to the GraphQL backend
 
 We can see the reduced number of calls, because all responses arrive in a shorter time see (A).
 
-With less requests, the number of waiting requests, caused by rate-limiting is smaller and the latency goes down (B).
+With fewer requests, the number of waiting requests caused by rate-limiting is smaller, and the latency goes down (B).
 
 ![app-Calls-Latency-infra](https://raw.githubusercontent.com/lowsky/blogs/master/images/app-Calls-Latency-infra.png)
 
@@ -229,9 +229,9 @@ At the end, we saved ca. 50% load on our backend, by reducing the number of requ
 
 ### Latencies
 
-And after optimization, we the requests sent from the browser have less had only minimal latency compared to before.
+After optimization, the requests sent from the browser have less latency compared with before.
 
-Here, Instana gives us theseall the more interesting details: 😎
+Here, Instana gives us more interesting insights: 😎
 
 The (GraphQL) requests sent from our Website to the API-gateway show how the response times for loading the data on the page goes down by factor 3, overall all pages get loaded in a shorter time.
 
