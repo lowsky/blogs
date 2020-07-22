@@ -1,6 +1,7 @@
 # blog posts
 
-- [PerformanceAnalyse part 1](Part1PerformanceAnalyseandOptimisationofaGraphql)
+- [Performance Monitoring of a GraphQL application (part 1)](Part1PerformanceAnalyseandOptimisationofaGraphql)
+- [Performance Optimisation of a GraphQL application (part 2)](Part2PerformanceOptimisationOfaGraphql.md)
 
 [this README](README)
 
