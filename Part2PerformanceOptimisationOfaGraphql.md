@@ -17,7 +17,7 @@ As described in the [previous blog post](https://hubs.ly/H0nrMwH0) in detail, it
 In this post I will describe how the load can easily be reduced by 50% and how the performance can greatly be improved.
 
 We will remove a bottleneck in the API-Gateway:
-![coolboard-on-dockerinstana.png](coolboard-on-dockerinstana.png)
+![coolboard-on-dockerinstana.png](https://raw.githubusercontent.com/lowsky/blogs/master/images/coolboard-on-dockerinstana.png)
 
 ### Root cause
 
@@ -223,9 +223,7 @@ We can see the reduced number of calls, because all responses arrive in a shorte
 
 With less requests, the number of waiting requests, caused by rate-limiting is smaller and the latency goes down (B).
 
-<!--
-![app-Calls-Latency-infra-](https://dev-to-uploads.s3.amazonaws.com/i/0s2jpkhmjyilobnp2bjp.png)
--->
+![app-Calls-Latency-infra](https://raw.githubusercontent.com/lowsky/blogs/master/images/app-Calls-Latency-infra.png)
 
 At the end, we saved ca. 50% load on our backend, by reducing the number of requests from 420 to 180 !
 
@@ -237,13 +235,13 @@ Here, Instana gives us theseall the more interesting details: 😎
 
 The (GraphQL) requests sent from our Website to the API-gateway show how the response times for loading the data on the page goes down by factor 3, overall all pages get loaded in a shorter time.
 
-![websites-Calls-Latency-infra](https://dev-to-uploads.s3.amazonaws.com/i/aubf51vhsxw2nr9j1sj5.png)
+![websites-Calls-Latency-infra](https://raw.githubusercontent.com/lowsky/blogs/master/images/websites-Calls-Latency-infra.png)
 
 ### Page load times for GraphQL requests
 
 And finally the improved page load times reflect the improvement:
 
-![an-websites-httpRequs-Retrieval-Time-](https://dev-to-uploads.s3.amazonaws.com/i/7qlfikpdpdu78oo22by6.png)
+![an-websites-httpRequs-Retrieval-Time-](https://raw.githubusercontent.com/lowsky/blogs/master/images/an-websites-httpRequs-Retrieval-Time-.png)
 
 Here we see the result of our performance optimization: much smaller retrieval times!
 
