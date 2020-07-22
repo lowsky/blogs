@@ -1,20 +1,20 @@
 # Performance optimization of a GraphQL powered App with instana
 ## Part 2 of Blog post series. -> [Part 1](https://hubs.ly/H0nrMwH0) 
 
-**"Works on my machine."** Okay, but we know quite well software never behaves the same when running on different machines... I knew that, but ran into unexpected performance issues when going live with a simple app. Here’s how I fixed the problem and improved performance.
+**"Works on my machine."** Okay, but we know quite well software never behaves the same when running on different machines... We knew that, but ran into unexpected performance issues when going live with a simple app. Here’s how we fixed the problem and improved performance.
 
 This is about an existing GraphQL application [www.coolboard.fun](https://www.coolboard.fun) - a kanban board trello-clone app. 
 It ran terribly slow when going live, running into performance issues caused by a rate-limited backend.
 
 After the root cause was found (see [previous post](https://hubs.ly/H0nrMwH0)) it's ready to be optimized and we will see the improvements in the results.
 
-Why did I not notice it earlier while developing? I was focused on delivering features, and when testing I was the only user 😉. But with more users more problems emerged 😲!
+Why did we not notice it earlier while developing? We were focused on delivering features, and when testing we were the only users 😉. But with more users more problems emerged 😲!
 
-With appropriate monitoring I was able to find the bottlenecks caused by simple design flaws quickly.
+With appropriate monitoring we were able to find the bottlenecks caused by simple design flaws quickly.
 
 As described in the [previous blog post](https://hubs.ly/H0nrMwH0) in detail, it was caused by a flawed design which was not visible while developing but easily found in production with Instana.
 
-In this post I will describe how the load can easily be reduced by 50% and how the performance can greatly be improved.
+In this post we will describe how the load can easily be reduced by 50% and how the performance can greatly be improved.
 
 We will remove a bottleneck in the API-Gateway:
 ![coolboard-on-dockerinstana.png](https://raw.githubusercontent.com/lowsky/blogs/master/images/coolboard-on-dockerinstana.png)
@@ -34,7 +34,7 @@ You might already guess that this could somehow be related to authentication, ri
 
 In our application, all the resolvers check JWT OAuth token and if a user with that auth-id exists in the database.
 
-In my first implementation this helper function `getUserId()` checks the authorization: 
+In our first implementation this helper function `getUserId()` checks the authorization: 
 
 ```javascript
 const getUserId = async (context) => {
@@ -186,7 +186,7 @@ for i in 1 2 3 4 5 6 7 8 9 10 ; do \
 done                                                                     
 ``` 
 
-Then I will **wait one minute** to get out of the rate-limiting time slot, and repeat it. After repeating this once again, we can ensure to get **more solid stats**:
+Then we will **wait one minute** to get out of the rate-limiting time slot, and repeat it. After repeating this once again, we can ensure to get **more solid stats**:
 
 ```shell 
 openBoardPage_10times
