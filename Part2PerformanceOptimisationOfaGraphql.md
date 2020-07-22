@@ -16,24 +16,13 @@ As described in the [previous blog post](https://hubs.ly/H0nrMwH0) in detail, it
 
 In this post I will describe how the load can easily be reduced by 50% and how the performance can greatly be improved.
 
+We will remove a bottleneck in the API-Gateway:
+![coolboard-on-dockerinstana.png](coolboard-on-dockerinstana.png)
+
 ### Root cause
 
 As mentioned in the previous post, our Gateway API always fires one additional GraphQL request for user data when the frontend fetches any data.
 You might already guess that this could somehow be related to authentication, right? And we will see, that is the right direction ...
-
----
-<!--
-To fix it, we need to **understanding** that any user must be **authenticated for read** to any board, and how it will be done:
-
-There are different solutions to handle authentication with GraphQL server[authen..], we use the approach: the client just sends the OAuth JWT authentication token as part of the http header.
-
-This will be avaialable in our GraphQL server in each `resolver` via a context:
-
-So we might ask why the server wants to load some (extra) user data **everythime**?
-It is **looking up the user-id** stored in the database together with the auth-token-id.
-
-And even while this works well, it leads to the performance problem when done wrong - our design bug!
--->
 
 ### Inefficient Authorisation check
 
@@ -45,7 +34,7 @@ And even while this works well, it leads to the performance problem when done wr
 
 In our application, all the resolvers check JWT OAuth token and if a user with that auth-id exists in the database.
 
-In my first implementation the authorization was checked via this helper function `getUserId()`:
+In my first implementation this helper function `getUserId()` checks the authorization: 
 
 ```javascript
 const getUserId = async (context) => {
@@ -210,6 +199,7 @@ openBoardPage_10times
 This generates 3 sections we will see in the charts in our results...
 
 ## Expected result and comparison
+
 After logging-in once into the browser, we are staying authenticated for the testing.
 So, effectively, our frontend opens 3 times 10 board pages.
 
@@ -219,43 +209,43 @@ Our frontend will send these GraphQL requests to the API gateway server:
 * 30 current-user queries
 * 150 (=30*5) cards-list queries.
 
-
-### Overall calls from the API gateway to the GraphQL backend
-
-| Before optimization | After optimization |
-|---|---|
+Our API gateway will send requests to the GraphQL backend
  
-![prisma requests](https://dev-to-uploads.s3.amazonaws.com/i/0s2jpkhmjyilobnp2bjp.png)
-At the end, we saved almost 50% load on our backend, by reducing the number of requests from > 350 to 180 !
-
-We can go deeper into the numbers for each GraphQL query (type), by grouping them:
-
-![GraphQL Calls](https://dev-to-uploads.s3.amazonaws.com/i/7s4ehsqordu33696o6z7.png)
-
--> Before optimization this would lead to **420 calls** in summary:
+-> Before optimization this lead to **420 calls** in summary:
 
 * 30 user queries + (30 user queries for auth check)
 * 30 board queries + (30 user-queries for auth check)
 * 150 card-list queries + (150 user-queries for auth check)
 
-    ⚠️ The rate-limiting causes drops and timeouts of about 65 responses!
+-> After optimising it results in only **180 calls** 👍
 
--> After optimising it results in overall **180 calls** 👍
+We can see the reduced number of calls, because all responses arrive in a shorter time see (A).
+
+With less requests, the number of waiting requests, caused by rate-limiting is smaller and the latency goes down (B).
+
+<!--
+![app-Calls-Latency-infra-](https://dev-to-uploads.s3.amazonaws.com/i/0s2jpkhmjyilobnp2bjp.png)
+-->
+
+At the end, we saved ca. 50% load on our backend, by reducing the number of requests from 420 to 180 !
 
 ### Latencies
 
-And after optimization, we had only minimal latency compared to before.
+And after optimization, we the requests sent from the browser have less had only minimal latency compared to before.
 
-Here, Instana gives us more interesting details: 😎
+Here, Instana gives us theseall the more interesting details: 😎
 
-![latency](https://dev-to-uploads.s3.amazonaws.com/i/aubf51vhsxw2nr9j1sj5.png)
+The (GraphQL) requests sent from our Website to the API-gateway show how the response times for loading the data on the page goes down by factor 3, overall all pages get loaded in a shorter time.
+
+![websites-Calls-Latency-infra](https://dev-to-uploads.s3.amazonaws.com/i/aubf51vhsxw2nr9j1sj5.png)
 
 ### Page load times for GraphQL requests
 
-And finally the improved page load times show much better results:
-(note - the vertical scale is different)
+And finally the improved page load times reflect the improvement:
 
-![Load time on page](https://dev-to-uploads.s3.amazonaws.com/i/7qlfikpdpdu78oo22by6.png)
+![an-websites-httpRequs-Retrieval-Time-](https://dev-to-uploads.s3.amazonaws.com/i/7qlfikpdpdu78oo22by6.png)
+
+Here we see the result of our performance optimization: much smaller retrieval times!
 
 
 ## Looking forward
